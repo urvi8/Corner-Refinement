@@ -1,6 +1,6 @@
 # Corner Refinement
 
-Understanding and improving biased behavior of corner detectors
+Understanding and improving biased behavior of corner detectors.
 
 ## Background and Objective
 
@@ -26,11 +26,13 @@ This project implements a corner refinement algorithm that processes window arou
 #### Clone the respository in desired directory
 
 ```
-git clone http://github.com/urvi8/Corner-Refinement
-
+git clone https://github.com/urvi8/Corner-Refinement
 ```
-
-#### Build package
+#### Naviagte to the directory
+```
+cd Corner-Refinement
+```
+#### Build package.
 
 ```
 mkdir build
@@ -50,7 +52,7 @@ There will be three command line parameters:  _executable_    _path/to/test/imag
 
 An example would be
 ```
-CornerRefine  /home/user/Corner-Refine/test-image.png  7
+./CornerRefine  /home/user/Corner-Refine/test-image.png  7
 ``` 
 The result will appear in a window and will be saved to the current directory.
 
