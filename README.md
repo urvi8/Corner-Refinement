@@ -8,7 +8,7 @@ Standard corner detectors e.g. Harris sometimes produce biased estimation of cor
 
 ## Getting Started
 
-### Platform used: Ubuntu 14.04 LTS
+#### Platform used: Ubuntu 14.04 LTS
 
 ## Dependencies
 [OpenCV 2.4](https://docs.opencv.org/2.4/doc/tutorials/introduction/linux_install/linux_install.html)
@@ -20,7 +20,7 @@ Standard corner detectors e.g. Harris sometimes produce biased estimation of cor
 #### Clone the respository in desired directory
 
 ```
-git clone(http://github.com/urvi8/Corner-Refinement)
+git clone http://github.com/urvi8/Corner-Refinement
 
 ```
 
@@ -40,14 +40,14 @@ make
 
 #### Run executable
 
-Follow the syntax _executable_  _path/to/test/image_  _sizeOfHarrisWIndowRadius_
+Follow the syntax:  executable   path/to/test/image   sizeOfHarrisWindowRadius
 
 An example would be
 ```
-CornerRefine /home/user/Corner-Refine/test-image 7
+CornerRefine  /home/user/Corner-Refine/test-image  7
 ``` 
 The result will appear in a window and will be saved to the current directory.
 
 ## Built With
 
-[CMake] (https://cmake.org/install/)
+[CMake](https://cmake.org/install/)
