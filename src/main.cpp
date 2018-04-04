@@ -42,7 +42,7 @@ int main( int argc, char** argv ) {
 
   cv::namedWindow( "Refined Corner Detection", CV_WINDOW_AUTOSIZE );                  // Visualize results 
   cv::imshow( "Refined Corner Detection", img );
-  cv::imwrite( "./result_grid2.jpg", img );
+  cv::imwrite( "./test_result.jpg", img );
   cv::waitKey(0);  
   
   return 0;
