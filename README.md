@@ -9,6 +9,7 @@ Standard corner detectors e.g. Harris sometimes produce biased estimation of cor
 This project implements a corner refinement algorithm that processes window around each detected corner; fits a line to surrounding edge points and projects the actaul corner on the line. This is achieved by maximizing dot product relative to the line's tangent. 
 
 ### Example Result:
+###### Blue - Harris corners, Red - Refined Corners, Harris Radius = 7
 ![alt text](https://github.com/urvi8/Corner-Refinement/blob/master/images/result1.jpg)
 
 ## Getting Started
