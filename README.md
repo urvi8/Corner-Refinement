@@ -6,6 +6,11 @@ Understanding and improving biased behavior of corner detectors
 
 Standard corner detectors e.g. Harris sometimes produce biased estimation of corners. These detectors detect actual corners under very specific conditions and are often not scale invariant. The goal is to understand why the detector mentioned above is biased and find an alternative which exhibits better behavior.
 
+This project implements a corner refinement algorithm that processes window around each detected corner; fits a line to surrounding edge points and projects the actaul corner on the line. This is achieved by maximizing dot product relative to the line's tangent. 
+
+### Example Result:
+![alt text](https://github.com/urvi8/Corner-Refinement/blob/master/images/result1.jpg)
+
 ## Getting Started
 
 #### Platform used: Ubuntu 14.04 LTS
@@ -40,14 +45,11 @@ make
 
 #### Run executable
 
-There will be three command line parameters:
-_executable_
-_path/to/test/image_
-_sizeOfHarrisWindowRadius_
+There will be three command line parameters:  _executable_    _path/to/test/image_    _sizeOfHarrisWindowRadius_
 
 An example would be
 ```
-CornerRefine  /home/user/Corner-Refine/test-image  7
+CornerRefine  /home/user/Corner-Refine/test-image.png  7
 ``` 
 The result will appear in a window and will be saved to the current directory.
 
