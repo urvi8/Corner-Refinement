@@ -1,0 +1,188 @@
+/**
+refineCorners.cpp
+Purpose: Performs corner refinement on biased corner detection by processing each corner. Fits a line to nearby edge points and calculates maximum dot product along the tangent of the line.
+
+@author Urvi Desai
+@version 1.3 04/03/2018
+*/
+
+#include "detectharriscorners.h"
+#include "computeedge.h"
+#include "refinecorners.h"
+
+
+/**
+Processes each corner to get refined corner points
+@param edge image from ComputeEdge class
+@param Harris corner points from DetectHarrisCorners class
+@return vector of refined corner points
+*/
+
+void RefineCorners::process( const int harrisRadius, const ComputeEdge &edgeObj, const DetectHarrisCorners &cornerObj ) {
+
+  int Nc = cornerObj.harrisCorners.size();
+   
+
+  for (int c=0; c < Nc; c++) {
+    cv::Point cornerPoint = cornerObj.harrisCorners[c];
+
+    createWindow( harrisRadius, cornerPoint);   
+    selectEdgePixels( harrisRadius, edgeObj ); 
+    fitLine(cornerObj, cornerPoint);
+    cv::Point actCornerPt = findAcutalCorner(cornerObj, cornerPoint);
+ 
+    actualCorners.push_back( actCornerPt );
+    
+    windowPoints.clear();
+    edgePoints.clear();
+    edgeIntensity.clear();
+  }
+
+}
+
+
+
+
+/**
+Function to create window for processing around corner points.
+@param harrisRadius for size ofsurrounding region
+@param cornerPoint is the current harris corner point being processed
+*/
+
+void RefineCorners::createWindow( const int harrisRadius, const cv::Point cornerPoint ) {
+
+  int regionRadius = harrisRadius/2+1;
+  
+  // create a window around detected corner point
+  for ( int x=-regionRadius; x<=regionRadius; x++ ) {  
+    for ( int y=-regionRadius; y<=regionRadius; y++ ) {          
+    
+      windowPoints.push_back( cv::Point (cornerPoint.x + x, cornerPoint.y + y) );
+    }  
+  }  
+}
+
+
+
+/**
+Sorts index based on edge intensity values
+@param input vector of edge instensities
+@return vector of indices of sorted intensity values
+*/
+std::vector<int> RefineCorners::sortIndx( const std::vector<int> &v ) {
+
+  std::vector<int> idx( v.size() );
+  std::iota(idx.begin(), idx.end(), 0 );
+
+  // sort indexes based on comparing values in v
+  std::sort( idx.begin(), idx.end(), [&v](int i1, int i2) { return v[i1] < v[i2]; } );
+
+  return idx;
+}
+
+
+
+/**
+Select pixels belonging to edge by a choosing fraction of edge intensity as threshold
+
+@param harrisRadius for radius of window around each point to pick edge points (radius = 2*harrisRadius+1)
+@param object from ComputeEdge class for edge image
+*/ 
+void RefineCorners::selectEdgePixels( const int harrisRadius,  const ComputeEdge &edgeObj ) {
+
+  int regionWidth = 2*harrisRadius+1;
+  
+  // store and sort edge intensity of pixels in the window
+  for ( int iter = 0; iter<windowPoints.size(); iter++ ){
+    cv::Point newPoint = windowPoints[iter];
+    int tempIntensity = (int) edgeObj.imgEdge.at<float>(newPoint.y, newPoint.x);  
+    edgeIntensity.push_back( tempIntensity );
+  }
+  std::vector<int> sortedIntensity = sortIndx( edgeIntensity );  
+  std::sort ( edgeIntensity.begin(), edgeIntensity.end() );
+
+  // List of all points above fraction intensity threshold from the sorted list
+  int fraction = (edgeIntensity.back())*3/regionWidth;
+  auto upIndex = std::upper_bound ( edgeIntensity.begin(), edgeIntensity.end(),fraction );
+  
+  int i = upIndex - edgeIntensity.begin();
+  for ( ; i <sortedIntensity.size(); i++ ){
+    int idx = sortedIntensity[i];
+    cv::Point newPoint = windowPoints[idx];
+    edgePoints.push_back( newPoint );
+
+  }
+
+}
+
+
+
+
+/**
+Fits a line to edge points to give polar parameters of line
+@param corner detector object for corners
+@param current corner point being processes
+*/
+void RefineCorners::fitLine( const DetectHarrisCorners &cornerObj, const cv::Point cornerPoint ) {
+
+  int sumX=0;
+  int sumY=0;
+  const int N = edgePoints.size();
+
+  for ( int i=0; i<N; i++ ) {
+    cv::Point ePt = edgePoints[i];
+    cv::Point p = cv::Point (ePt.x-cornerPoint.x, ePt.y-cornerPoint.y); 
+    sumX += p.x;
+    sumY += p.y;
+  }
+
+  double meanX = sumX/(double)N;
+  double meanY = sumY/(double)N;
+  double num = 0;
+  double denom = 0;
+  
+  for ( int i=0; i<N; i++ ) {
+    cv::Point ePt = edgePoints[i];
+    cv::Point p = cv::Point (ePt.x-cornerPoint.x, ePt.y-cornerPoint.y); 
+    double dx = meanX - p.x;
+    double dy = meanY - p.y;
+
+    num += dx*dy;
+    denom += dy*dy - dx*dx; 
+  }
+
+  line[0] = atan2( -2.0*num, denom )/2.0;
+  line[1] = meanX*cos( line[0] ) + meanY*sin( line[0] );
+  if ( line[1] < 0 ) { 
+    line[1] = -line[1];
+    line[0] = line[0] + M_PI;
+  }
+
+}
+
+
+
+
+/**
+Function to find actual corner from edge points by finding maximum dot-product along line tangent
+@param corner detector object for corners
+@param current corner point being processes
+@return a 2d corner point with maximum dot product along the line fitted to edge points
+*/
+cv::Point RefineCorners::findAcutalCorner( const DetectHarrisCorners &cornerObj, const cv::Point cornerPoint) {
+
+  const int N = edgePoints.size();
+  double dotProducts[N];
+
+  for ( int i=0; i<N; i++ ) {  
+    cv::Point ePt = edgePoints[i];
+    cv::Point newPt = cv::Point ( ePt.x-cornerPoint.x, ePt.y-cornerPoint.y );
+    dotProducts[i] = newPt.x*cos(line[0]) + newPt.y*sin(line[0]);
+  }
+
+  double maxIndex = std::distance( dotProducts, std::max_element( dotProducts, dotProducts+N) ); 
+  cv::Point actCornerPt = edgePoints[maxIndex];
+  
+  return actCornerPt;
+}
+

@@ -1,0 +1,42 @@
+#include "computeedge.h"
+/*
+ComputeEdge::ComputeEdge(){
+
+  cv::Mat imgEdge;
+  
+}
+*/
+
+/**
+Function computes edge intensity image of the input image.
+@param img - Input image matrix
+@return imgEdge - Output edge intensity image
+*/
+cv::Mat ComputeEdge::detectEdge( const cv::Mat &img ) {
+
+  // create kernel
+  cv::Mat kernel(1,2, CV_32FC1);
+  kernel.at<float>(0,0) = -1;
+  kernel.at<float>(0,1) = 1;
+
+ // smooth image
+  cv::GaussianBlur( img, img, cv::Size(3,3), 0, 0 );
+
+  // Find edge Edge I = sqrt(Ix*Ix + Iy*Iy)
+  cv::Mat imgGray, imgGradX, imgGradY;
+  
+  cv::cvtColor( img, imgGray, CV_BGR2GRAY );
+  cv::filter2D( imgGray, imgGradX, CV_32F, kernel, cv::Point(-1,-1), 0 );
+  cv::filter2D( imgGray, imgGradY, CV_32F, kernel.t(), cv::Point(-1,-1), 0 );
+
+  imgGradX = imgGradX.mul( imgGradX );
+  imgGradY = imgGradY.mul( imgGradY );
+  cv::sqrt( (imgGradX + imgGradY), imgEdge );
+
+  imgGray.release();
+  imgGradX.release();
+  imgGradY.release();
+  
+  return imgEdge;
+}
+
