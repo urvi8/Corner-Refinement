@@ -1,3 +1,0 @@
-/home/urvi/Corner-Refinement/build/CMakeFiles/rebuild_cache.dir
-/home/urvi/Corner-Refinement/build/CMakeFiles/edit_cache.dir
-/home/urvi/Corner-Refinement/build/CMakeFiles/CornerRefine.dir
