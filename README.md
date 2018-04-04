@@ -40,7 +40,10 @@ make
 
 #### Run executable
 
-Follow the syntax:  executable   path/to/test/image   sizeOfHarrisWindowRadius
+There will be three command line parameters:
+_executable_
+_path/to/test/image_
+_sizeOfHarrisWindowRadius_
 
 An example would be
 ```
