@@ -40,9 +40,14 @@ int main( int argc, char** argv ) {
     circle( img, cornerDetector.harrisCorners[i], 1, cv::Scalar(255,0,0), 2, 8, 0 );
   }
 
+  cv::namedWindow( "Edge Detection", CV_WINDOW_AUTOSIZE );                  // Visualize edge detection 
+  cv::imshow( "Edge Detection", imEdge );
+
   cv::namedWindow( "Refined Corner Detection", CV_WINDOW_AUTOSIZE );                  // Visualize results 
   cv::imshow( "Refined Corner Detection", img );
   cv::imwrite( "./test_result.jpg", img );
+
+
   cv::waitKey(0);  
   
   return 0;

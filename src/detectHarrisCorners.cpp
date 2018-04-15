@@ -32,17 +32,15 @@ void DetectHarrisCorners::selectStrongest( const std::vector<cv::Point> &cornerE
       for( int n=-winSize/2; n<winSize/2; n++ ) {
  
         cv::Point currentPt = cv::Point ( currentC.x+n,currentC.y+m );
-        auto it = std::find( cornerEstimates.begin(), cornerEstimates.end(), currentPt);
-        if ( it != cornerEstimates.end() ){
-          float tempH = harrisValue.at<float>( currentPt.y, currentPt.x );
-          if ( tempH > maxH ) {
-            maxH = tempH;
-            maxPt = currentPt;
-          }          
-        }
+        float tempH = harrisValue.at<float>( currentPt.y, currentPt.x );
+        if ( tempH > maxH ) {
+          maxH = tempH;
+          maxPt = currentPt;
+        }          
 
       }
     }
+
     if (std::find( harrisCorners.begin(), harrisCorners.end(), maxPt) == harrisCorners.end() ) {
       harrisCorners.push_back( maxPt );
     }   

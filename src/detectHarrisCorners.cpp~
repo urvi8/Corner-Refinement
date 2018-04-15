@@ -32,14 +32,14 @@ void DetectHarrisCorners::selectStrongest( const std::vector<cv::Point> &cornerE
       for( int n=-winSize/2; n<winSize/2; n++ ) {
  
         cv::Point currentPt = cv::Point ( currentC.x+n,currentC.y+m );
-        auto it = std::find( cornerEstimates.begin(), cornerEstimates.end(), currentPt);
-        if ( it != cornerEstimates.end() ){
+//        auto it = std::find( cornerEstimates.begin(), cornerEstimates.end(), currentPt);
+//        if ( it != cornerEstimates.end() ){
           float tempH = harrisValue.at<float>( currentPt.y, currentPt.x );
           if ( tempH > maxH ) {
             maxH = tempH;
             maxPt = currentPt;
           }          
-        }
+//        }
 
       }
     }
@@ -85,7 +85,7 @@ void DetectHarrisCorners::findCorners ( const int harrisRadius, const cv::Mat &i
   for( int j = 0; j < height; j++ ){
     for( int i = 0; i < width; i++ ) {
     
-      cv::Mat M(2,2,CV_32F);  // Harris matrix
+      cv::Mat M(2,2,CV_32F);                         // Harris matrix
       M.at<float>(0,0) = imgGradXX.at<float>( j,i );
       M.at<float>(1,0) = imgGradXY.at<float>( j,i );
       M.at<float>(0,1) = imgGradXY.at<float>( j,i );
@@ -94,7 +94,7 @@ void DetectHarrisCorners::findCorners ( const int harrisRadius, const cv::Mat &i
       int k = 0.05;
       float deterH = cv::determinant( M );
       float traceH = M.at<float>(0,0) + M.at<float>(1,1);      
-      float cornerStrength = deterH - k*traceH; // R = Det(M) - k*trace(M)
+      float cornerStrength = deterH - k*traceH;      // R = Det(M) - k*trace(M)
       harrisValue.at<float>(j,i) = cornerStrength;  
     }
   }
@@ -116,7 +116,7 @@ void DetectHarrisCorners::findCorners ( const int harrisRadius, const cv::Mat &i
     }
   }  
   
-  selectStrongest( cornerEstimates, harrisValue ); // Non-maximum suppression
+  selectStrongest( cornerEstimates, harrisValue );   // Non-maximum suppression
   
   imgGray.release();
   imgGradX.release();

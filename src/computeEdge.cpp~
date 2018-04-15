@@ -1,11 +1,4 @@
 #include "computeedge.h"
-/*
-ComputeEdge::ComputeEdge(){
-
-  cv::Mat imgEdge;
-  
-}
-*/
 
 /**
 Function computes edge intensity image of the input image.
@@ -17,7 +10,7 @@ cv::Mat ComputeEdge::detectEdge( const cv::Mat &img ) {
   // create kernel
   cv::Mat kernel(1,2, CV_32FC1);
   kernel.at<float>(0,0) = -1;
-  kernel.at<float>(0,2) = 1;
+  kernel.at<float>(0,1) = 1;
 
  // smooth image
   cv::GaussianBlur( img, img, cv::Size(3,3), 0, 0 );

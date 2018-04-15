@@ -1,11 +1,5 @@
 #include "computeedge.h"
-/*
-ComputeEdge::ComputeEdge(){
 
-  cv::Mat imgEdge;
-  
-}
-*/
 
 /**
 Function computes edge intensity image of the input image.
